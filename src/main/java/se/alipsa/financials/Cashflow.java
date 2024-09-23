@@ -21,7 +21,7 @@ public class Cashflow {
    * @param loanAmount including startupFee
    * @return a List of Payment
    */
-  public static List<Payment> calculatePaymentPlan(
+  public static List<Payment> paymentPlan(
       int loanAmount,
       BigDecimal interest,
       int tenureYears,
@@ -54,7 +54,7 @@ public class Cashflow {
     return paymentPlans;
   }
 
-  public static double[] calculateCashFlow(List<Payment> paymentPlan) {
+  public static double[] cashFlow(List<Payment> paymentPlan) {
     double[] cashFlow = new double[paymentPlan.size()];
     for (int i = 0; i < cashFlow.length; i++) {
       cashFlow[i] = paymentPlan.get(i).getCacheFlow().doubleValue();
@@ -62,11 +62,11 @@ public class Cashflow {
     return cashFlow;
   }
 
-  public static double[] calculateCashFlow(int loanAmount,
-                                           int tenureYears,
-                                           int amFreeMonths,
-                                           BigDecimal interest,
-                                           Integer invoiceFee) {
+  public static double[] cashFlow(int loanAmount,
+                                  BigDecimal interest,
+                                  int tenureYears,
+                                  int amFreeMonths,
+                                  Integer invoiceFee) {
     double interestCostAmFreePeriod = loanAmount * interest.doubleValue() / 12;
     int tenureMonths = tenureYears * 12;
     double monthlyAnnuity = LoanCalculator.monthlyAnnuityAmount(loanAmount, interest.doubleValue(), tenureYears, amFreeMonths);

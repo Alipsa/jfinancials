@@ -16,26 +16,26 @@ public class IrrTest {
   @Test
   public void testIrrCalculations() {
 
-    double[] cashFlow = Cashflow.calculateCashFlow(50429, 5, 12, BigDecimal.valueOf(0.149000), 30);
+    double[] cashFlow = Cashflow.cashFlow(50429, BigDecimal.valueOf(0.149000),5, 12, 30);
     double irr = irr(cashFlow);
     assertEquals(0.013248756, irr, 1E-5);
 
-    cashFlow = Cashflow.calculateCashFlow(263429, 15, 12, BigDecimal.valueOf(0.189000), 30);
+    cashFlow = Cashflow.cashFlow(263429, BigDecimal.valueOf(0.189000), 15, 12, 30);
     irr = irr(cashFlow);
     assertEquals(0.015878621, irr, 1E-5);
 
     // Highest possible values
-    cashFlow = Cashflow.calculateCashFlow(500429, 15, 0, BigDecimal.valueOf(0.189500), 30);
+    cashFlow = Cashflow.cashFlow(500429, BigDecimal.valueOf(0.189500), 15, 0, 30);
     irr = irr(cashFlow);
     assertEquals(0.015860156, irr, 1E-5);
 
     // Lowest possible
-    cashFlow = Cashflow.calculateCashFlow(20429, 2, 0, BigDecimal.valueOf(0.019500), 0);
+    cashFlow = Cashflow.cashFlow(20429, BigDecimal.valueOf(0.019500), 2, 0, 0);
     irr = irr(cashFlow);
     assertEquals(0.001625, irr, 1E-5);
 
     // Highest possible effective interest
-    cashFlow = Cashflow.calculateCashFlow(20429, 2, 0, BigDecimal.valueOf(0.189500), 30);
+    cashFlow = Cashflow.cashFlow(20429, BigDecimal.valueOf(0.189500), 2, 0, 30);
     irr = irr(cashFlow);
     assertEquals(0.01829059, irr, 1E-5);
 

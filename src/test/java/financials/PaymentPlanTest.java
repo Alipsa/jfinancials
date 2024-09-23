@@ -22,7 +22,7 @@ public class PaymentPlanTest {
     BigDecimal interest = BigDecimal.valueOf(0.0677);
     BigDecimal invoiceFee = BigDecimal.valueOf(30);
 
-    List<Payment> paymentPlanList = Cashflow.calculatePaymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
+    List<Payment> paymentPlanList = Cashflow.paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
 
     Payment m0 = paymentPlanList.get(0);
     assertEquals(BigDecimal.valueOf(loanAmt), m0.getOutgoingBalance());
@@ -61,7 +61,7 @@ public class PaymentPlanTest {
     BigDecimal interest = BigDecimal.valueOf(0.0535);
     BigDecimal invoiceFee = BigDecimal.valueOf(0);
 
-    List<Payment> paymentPlanList = Cashflow.calculatePaymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
+    List<Payment> paymentPlanList = Cashflow.paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
 
     Payment m0 = paymentPlanList.get(0);
     assertEquals(BigDecimal.valueOf(loanAmt), m0.getOutgoingBalance());

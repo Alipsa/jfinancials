@@ -48,7 +48,7 @@ public class LoanCalculator {
   }
 
   public static double dailyInterestAmount(int loanAmount, BigDecimal interestRate, int tenureYears, int amFreeMonths, int statementFee) {
-    List<Payment> paymentPlan = Cashflow.calculatePaymentPlan(loanAmount, interestRate, tenureYears,amFreeMonths, BigDecimal.valueOf(statementFee));
+    List<Payment> paymentPlan = Cashflow.paymentPlan(loanAmount, interestRate, tenureYears,amFreeMonths, BigDecimal.valueOf(statementFee));
     return dailyInterestAmount(paymentPlan, tenureYears);
   }
 
@@ -139,7 +139,7 @@ public class LoanCalculator {
    */
   public static double effectiveInterestRate(int loanAmt, BigDecimal interest, int tenureYears, int amortizationFreeMonths, Integer statementFee) {
     //List<Payment> paymentPlanList = Cashflow.calculatePaymentPlan(loanAmt, tenureMonths, amortizationFreeMonths, interest, BigDecimal.valueOf(statementFee));
-    double[] cashFlow = Cashflow.calculateCashFlow(loanAmt, tenureYears, amortizationFreeMonths, interest, statementFee);
+    double[] cashFlow = Cashflow.cashFlow(loanAmt, interest, tenureYears, amortizationFreeMonths, statementFee);
     double irr = InternalRateOfReturn.irr(cashFlow);
     return LoanCalculator.apr(irr);
   }
