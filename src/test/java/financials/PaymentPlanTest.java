@@ -1,6 +1,7 @@
 package financials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static se.alipsa.financials.Financials.*;
 
 import org.junit.jupiter.api.Test;
 import se.alipsa.financials.*;
@@ -19,7 +20,7 @@ public class PaymentPlanTest {
     BigDecimal interest = BigDecimal.valueOf(0.0677);
     BigDecimal invoiceFee = BigDecimal.valueOf(30);
 
-    PaymentPlan paymentPlan = Cashflow.paymentPlan(loanAmt, interest, tenure, amortizationFreeMonths, invoiceFee);
+    PaymentPlan paymentPlan = paymentPlan(loanAmt, interest, tenure, amortizationFreeMonths, invoiceFee);
 
     Payment m0 = paymentPlan.get(0);
     assertEquals(BigDecimal.valueOf(loanAmt), m0.getOutgoingBalance());
@@ -38,13 +39,13 @@ public class PaymentPlanTest {
     verifyPayment(72, 854.21, 4.79, 849.41, invoiceFee,
         0, 884.21, paymentPlan.get(72));
 
-    double irr = InternalRateOfReturn.irr(paymentPlan);
+    double irr = irr(paymentPlan);
     assertEquals(0.006667407, irr, 0.0000001);
 
-    double apr = LoanCalculator.apr(irr);
+    double apr = apr(irr);
     assertEquals(0.0830, apr, 0.0001);
 
-    double effectiveInterest = LoanCalculator.effectiveInterestRate(irr*12);
+    double effectiveInterest = effectiveInterestRate(irr*12);
     assertEquals(0.0830, effectiveInterest, 0.0001);
 
   }
@@ -57,7 +58,7 @@ public class PaymentPlanTest {
     var interest = BigDecimal.valueOf(3.5 / 100);
     var invoiceFee = BigDecimal.valueOf(30);
 
-    var paymentPlan = Cashflow.paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
+    var paymentPlan = paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
     String[] rows = paymentPlan.toString().split("\n");
     assertEquals("month,costOfCredit,interestAmt,amortization,invoiceFee,outgoingBalance,cashFlow", rows[0]);
     assertEquals("0,0.00,0.00,0.00,0.00,10000.00,-10000.00", rows[1]);
@@ -73,7 +74,7 @@ public class PaymentPlanTest {
     BigDecimal interest = BigDecimal.valueOf(0.0535);
     BigDecimal invoiceFee = BigDecimal.valueOf(0);
 
-    PaymentPlan paymentPlan = Cashflow.paymentPlan(loanAmt, interest, tenure, amortizationFreeMonths, invoiceFee);
+    PaymentPlan paymentPlan = paymentPlan(loanAmt, interest, tenure, amortizationFreeMonths, invoiceFee);
 
     Payment m0 = paymentPlan.get(0);
     assertEquals(BigDecimal.valueOf(loanAmt), m0.getOutgoingBalance());
@@ -91,13 +92,13 @@ public class PaymentPlanTest {
     verifyPayment(24, 4603.89, 20.43, 4583.46, invoiceFee,
         0, 4603.89, paymentPlan.get(24));
 
-    double irr = InternalRateOfReturn.irr(paymentPlan);
+    double irr = irr(paymentPlan);
     assertEquals(0.004458333, irr, 0.0000001);
 
-    double apr = LoanCalculator.apr(irr);
+    double apr = apr(irr);
     assertEquals(0.054832, apr, 0.000001);
 
-    double effectiveInterest = LoanCalculator.effectiveInterestRate(irr*12);
+    double effectiveInterest = effectiveInterestRate(irr*12);
     assertEquals(0.054832, effectiveInterest, 0.000001);
 
     var rowList = paymentPlan.toRowList();

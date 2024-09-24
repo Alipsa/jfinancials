@@ -2,45 +2,45 @@ package financials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static se.alipsa.financials.Financials.*;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.alipsa.financials.LoanCalculator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
-public class LoanCalculatorTest {
-  private static final Logger LOG = LoggerFactory.getLogger(LoanCalculatorTest.class);
+public class LoanCalculationTest {
+  private static final Logger LOG = LoggerFactory.getLogger(LoanCalculationTest.class);
 
   @Test
   public void testPaymentCalculations() {
 
-    int monthlyPayments = (int)Math.round(LoanCalculator.monthlyAnnuityAmount(100_000, 0.0495, 3 * 12,0));
+    int monthlyPayments = (int)Math.round(monthlyAnnuityAmount(100_000, 0.0495, 3 * 12,0));
     assertEquals(2995, monthlyPayments, "monthlyPayments, 100 000 at 4.95 over 3 years");
     assertEquals(
         //108900,
         108894,
-        (int)Math.round(LoanCalculator.totalPaymentAmount(100_000, 0.0495, 3 * 12, 0,30)),
+        (int)Math.round(totalPaymentAmount(100_000, 0.0495, 3 * 12, 0,30)),
         "Total payment, 100 000 at 4.95 over 3 years");
 
     assertEquals(644.1859,
         round(
-            LoanCalculator.monthlyAnnuityAmount(120_000, 0.05, 30 * 12, 0), 4),
+            monthlyAnnuityAmount(120_000, 0.05, 30 * 12, 0), 4),
         0.00001,
         "monthlyPayments, 120 000 at 5% over 30 years");
 
     assertEquals(4603.89,
         round(
-            LoanCalculator.monthlyAnnuityAmount(100_429, 0.0535, 2 * 12, 1), 4),
+            monthlyAnnuityAmount(100_429, 0.0535, 2 * 12, 1), 4),
         0.01,
         "monthlyPayments, 100 429 at 5.35% over 2 years");
 
     assertEquals(4191,
         round(
-            LoanCalculator.monthlyAnnuityAmount(400_429, 0.0471, 10 * 12, 0), 0),
+            monthlyAnnuityAmount(400_429, 0.0471, 10 * 12, 0), 0),
         0.01,
         "monthlyPayments, 400 439 at 4.71% over 10 years");
 
@@ -50,15 +50,15 @@ public class LoanCalculatorTest {
   public void testEffectiveInterest() {
     //loanAmount: 263429, tenureYears: 15,amfreeMonths: 0, interest: 0.055000, statementFee: 30. ApplicationId = 1234567
     long start = System.currentTimeMillis();
-    double eir = LoanCalculator.effectiveInterestRate(263429, BigDecimal.valueOf(0.055000), 15 * 12, 12, 30);
+    double eir = effectiveInterestRate(263429, BigDecimal.valueOf(0.055000), 15 * 12, 12, 30);
     assertEquals(0.0585669, eir, 1E-7);
-    eir = LoanCalculator.effectiveInterestRate(50429, BigDecimal.valueOf(0.045000), 14 * 12, 12, 30);
+    eir = effectiveInterestRate(50429, BigDecimal.valueOf(0.045000), 14 * 12, 12, 30);
     assertEquals(0.0574472, eir, 1E-7);
-    eir = LoanCalculator.effectiveInterestRate(463429, BigDecimal.valueOf(0.055000), 15 * 12, 12, 30);
+    eir = effectiveInterestRate(463429, BigDecimal.valueOf(0.055000), 15 * 12, 12, 30);
     assertEquals(0.0576366, eir, 1E-7);
-    eir = LoanCalculator.effectiveInterestRate(50429, BigDecimal.valueOf(0.149000), 5 * 12, 12, 30);
+    eir = effectiveInterestRate(50429, BigDecimal.valueOf(0.149000), 5 * 12, 12, 30);
     assertEquals(0.1710972, eir, 1E-7);
-    eir = LoanCalculator.effectiveInterestRate(50429, BigDecimal.valueOf(0.149000), 15 * 12, 12, 30);
+    eir = effectiveInterestRate(50429, BigDecimal.valueOf(0.149000), 15 * 12, 12, 30);
     assertEquals(0.1693646, eir, 1E-7);
     long end = System.currentTimeMillis();
     long executionTime = (end - start);
@@ -88,23 +88,23 @@ public class LoanCalculatorTest {
                                   double expEffectiveInterest, double expMonthlyAnnuityAmt, double expTotalPaymentAmt,
                                   double expDailyInterestAmt) {
 
-    double eir = LoanCalculator.effectiveInterestRate(loanAmt, BigDecimal.valueOf(interest), tenureMonths, amortizationFreeMonths, statementFee);
+    double eir = effectiveInterestRate(loanAmt, BigDecimal.valueOf(interest), tenureMonths, amortizationFreeMonths, statementFee);
     assertEquals(expEffectiveInterest, eir, 1E-7);
 
     NumberFormat formatter = NumberFormat.getPercentInstance();
     formatter.setMinimumFractionDigits(2);
     String prettyInterest = formatter.format(interest);
 
-    double monthlyPayments = LoanCalculator.monthlyAnnuityAmount(loanAmt, interest, tenureMonths, amortizationFreeMonths);
+    double monthlyPayments = monthlyAnnuityAmount(loanAmt, interest, tenureMonths, amortizationFreeMonths);
     assertEquals(expMonthlyAnnuityAmt, monthlyPayments, 0.01,
         "monthlyPayments, " + loanAmt + " at " + prettyInterest + " over " + tenureMonths/12 + " years");
 
-    double totalPaymentAmt = LoanCalculator.totalPaymentAmount(loanAmt, interest, tenureMonths, amortizationFreeMonths, statementFee);
+    double totalPaymentAmt = totalPaymentAmount(loanAmt, interest, tenureMonths, amortizationFreeMonths, statementFee);
     assertEquals(
         expTotalPaymentAmt, totalPaymentAmt, 0.01,
         "Total payment, " + loanAmt + " at " + prettyInterest + " over " + tenureMonths/12 + " years");
 
-    double daylyInterestAmt = LoanCalculator.dailyInterestAmount(loanAmt, BigDecimal.valueOf(interest), tenureMonths,
+    double daylyInterestAmt = dailyInterestAmount(loanAmt, BigDecimal.valueOf(interest), tenureMonths,
         amortizationFreeMonths, statementFee);
     assertEquals(expDailyInterestAmt, daylyInterestAmt, 0.01, "Daily Interest");
   }
@@ -128,6 +128,6 @@ public class LoanCalculatorTest {
 
   @Test
   void testPmt() {
-    assertEquals(2004.4310660109, LoanCalculator.pmt(3.5/100, 60, -50000), 1e-8);
+    assertEquals(2004.4310660109, pmt(3.5/100, 60, -50000), 1e-8);
   }
 }

@@ -10,9 +10,10 @@ To use it add the following dependency to your pom
     <version>1.0.0</version>
 </dependency>
 ```
+All methods of the public api are in the se.alipsa.financials.Financials class
 
 ### Payment
-`LoanCalculator.pmt(interestRate, nper, pv, fv = 0, type = 0)`
+`double pmt(interestRate, nper, pv, fv = 0, type = 0)`
 
 Equivalent to Excel/Calc's PMT(interest_rate, number_payments, PV, FV, Type)
 function, which calculates the payments for a loan or the future value of an investment
@@ -39,10 +40,10 @@ The following data:
 | Monthly payment | 	909.59 |
 
 Then the Monthly payment can be calculated as
-`LoanCalculator.pmt(3.5/100, 60, -50000)` ≈ 2004.43
+`pmt(3.5/100, 60, -50000)` ≈ 2004.43
 
 ### Monthly Annuity Amount
-`LoanCalculator.monthlyAnnuityAmount(loanAmount, interestRate, tenureMonths, amortizationFreemonths = 0, type = 0)`
+`monthlyAnnuityAmount(loanAmount, interestRate, tenureMonths, amortizationFreemonths = 0, type = 0)`
 
 Calculate the monthly annuity amount i.e. the amortization and interest amount each payment period (month)
 
@@ -67,7 +68,7 @@ Assuming the following:
 | Amortization Free months | 	6     |
 
 The monthly annuity amount would be
-`LoanCalculator.monthlyAnnuityAmount(50000, 3.5/100, 60, 6)` == 1002.10
+`monthlyAnnuityAmount(50000, 3.5/100, 60, 6)` == 1002.10
 
 ### Cash Flow
 `cashFlow(loanAmount, interestRate, tenureMonths, amortizationFreeMonths, invoiceFee)`
@@ -84,11 +85,11 @@ _returns_ an array of doubles of cachFlow entries for each period
 
 #### Example
 ```r
-var cf = Cashflow.cashFlow(50000, 0.035, 5, 6, 30)
+var cf = Financials.cashFlow(50000, 0.035, 5, 6, 30)
 ```
 
 ### Payment Plan
-`paymentPlan <- function(loanAmount, interestRate, tenureMonths, amortizationFreeMonths = 0, invoiceFee = 0)`
+`paymentPlan(loanAmount, interestRate, tenureMonths, amortizationFreeMonths = 0, invoiceFee = 0)`
 
 #### Parameters
 - _loanAmount_ the total loan amount including capitalized fees (e.g. startup fee)
@@ -109,7 +110,7 @@ var amortizationFreeMonths = 6;
 var interest = BigDecimal.valueOf(3.5 / 100);
 var invoiceFee = BigDecimal.valueOf(30);
 
-var paymentPlan = Cashflow.paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
+var paymentPlan = Financials.paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
 System.out.println(paymentPlan);
 ```
 
@@ -138,7 +139,7 @@ which will the following output:
 | 18     | 849.22       | 2.47        | 846.75       | 30.00      | 0.00            | 879.22    |
 
 ### Total Payment amount
-`LoanCalculator.totalPaymentAmount(loanAmount, interestRate, tenureMonths, amortizationFreeMonths, invoiceFee)`
+`Financials.totalPaymentAmount(loanAmount, interestRate, tenureMonths, amortizationFreeMonths, invoiceFee)`
 
 Total Payment amount is the sum of all payments.
 #### Parameters
@@ -154,6 +155,8 @@ _returns_ a double containing the sum of all payments
 #### Example
 
 ```groovy
+import static se.alipsa.financials.Financials.*;
+
 double loanAmt = 10000;
 int tenureMonths = (int) (1.5 * 12);
 int amortizationFreeMonths = 6;
@@ -180,7 +183,7 @@ _returns_ a double containing the internal return rate
 Given the cache flow above
 
 ```groovy
-import static se.alipsa.financials.InternalRateOfReturn.*;
+import static se.alipsa.financials.Financials.*;
 
 var internalReturn = irr(paymentPlan.getColumn("cashFlow"));
 System.out.println(internalReturn);
@@ -202,7 +205,7 @@ _Returns_ a double with the annual percentage rate
 
 #### Example
 ```groovy
-import static se.alipsa.financials.LoanCalculator.*;
+import static se.alipsa.financials.Financials.*;
 
 double annualPercentage = apr(internalReturn)
 print(annualPercentage)
@@ -212,7 +215,6 @@ print(annualPercentage)
 ```
 
 ### Net present value
-import static se.alipsa.financials.InternalRateOfReturn.*;
 `double npv(double[] cashFlow, double rate)`
 
 Net present value (NPV) is the difference between the present value
@@ -228,7 +230,7 @@ _Returns_ a double with the net present value
 
 #### Examples
 ```groovy
-import se.alipsa.financials.InternalRateOfReturn.*
+import se.alipsa.financials.Financials.*
 
 System.out.println(npv(List.of(-123400, 36200, 54800, 48100), 0.035));
 ```
