@@ -31,12 +31,12 @@ __Calulate payment for a loan__
 
 The following data:
 
-| Item            | amount |
-| -----           | -----  |
-| Loan Amount	  |  50000 |
-| Interest rate	  |  3.50% |
-| Periods	      |     60 |
-| Monthly payment |	909.59 |
+| Item            | amount  |
+|-----------------|---------|
+| Loan Amount	    | 50000   |
+| Interest rate	  | 3.50%   |
+| Periods	        | 60      |
+| Monthly payment | 	909.59 |
 
 Then the Monthly payment can be calculated as
 `LoanCalculator.pmt(3.5/100/12, 60, -50000)`
@@ -59,12 +59,12 @@ _returns_ the monthly annuity amount
 #### Example
 Assuming the following:
 
-| Item            | amount |
-| -----           | -----  |
-| Loan Amount	  |  50000 |
-| Interest rate	  |  3.50% |
-| Tenure	      |     60 |
-| Amortization Free months |	6 |
+| Item                     | amount |
+|--------------------------|--------|
+| Loan Amount	             | 50000  |
+| Interest rate	           | 3.50%  |
+| Tenure	                  | 60     |
+| Amortization Free months | 	6     |
 
 The monthly annuity amount would be
 `LoanCalculator.monthlyAnnuityAmount(50000, 3.5/100, 60, 6)` == 1002.10
@@ -102,42 +102,43 @@ _returns_ a List of Payment with the initial payment plan based on the input, ba
 
 #### Example
 
-```r
-loanAmt <- 10000
-tenureMonths <- 1.5 * 12
-amortizationFreeMonths <- 6
-interest <- 3.5 / 100
-invoiceFee <- 30
+```groovy
+var loanAmt = 10000;
+var tenureYears = (int)(1.5 * 12);
+var amortizationFreeMonths = 6;
+var interest = BigDecimal.valueOf(3.5 / 100);
+var invoiceFee = BigDecimal.valueOf(30);
 
-ppdf <- paymentPlan(loanAmt, interest, tenureMonths, amortizationFreeMonths, invoiceFee)
+var paymentPlan = Cashflow.paymentPlan(loanAmt, interest, tenureYears, amortizationFreeMonths, invoiceFee);
+System.out.println(paymentPlan);
 ```
 
-which will yield a data.frame (ppdf) as follows:
+which will the following output:
 
-| month	| costOfCredit | interestAmt | amortization | invoiceFee | outgoingBalance | cashFlow |
-| ----  | --------     | ------      | ------       | ------     | ------          | ----     |
-| 0	|      0	|      0    |     0	    |  0    | 10000	    | -10000  |
-| 1	| 29.167	| 29.167	|     0	    | 30    | 10000	    | 59.167  |
-| 2	| 29.167	| 29.167    |     0	    | 30    | 10000	    | 59.167  |
-| 3	| 29.167    | 29.167	|     0	    | 30    | 10000	    | 59.167  |
-| 4	| 29.167    | 29.167    |	  0	    | 30    | 10000	    | 59.167  |
-| 5	| 29.167	| 29.167	|     0	    | 30    | 10000	    | 59.167  |
-| 6	| 849.216	| 29.167	| 820.05    | 30    | 9179.95   | 879.216 |
-| 7	|  849.216	| 26.775    | 822.441	| 30    | 8357.509  | 879.216 |
-| 8	| 849.216	| 24.376	| 824.84	| 30	| 7532.669	| 879.216 |
-| 9	| 849.216	|  21.97	| 827.246	| 30	| 6705.423	| 879.216 |
-|10	| 849.216	| 19.557	| 829.659	| 30	| 5875.764	| 879.216 |
-|11	| 849.216	| 17.138	| 832.079	| 30	| 5043.685	| 879.216 | 
-|12	| 849.216	| 14.711	| 834.506	| 30	|  4209.18	| 879.216 |
-|13	| 849.216	| 12.277	|  836.94	| 30	|  3372.24	| 879.216 |
-|14	| 849.216	|  9.836	| 839.381	| 30	|  2532.86	| 879.216 |
-|15	| 849.216	|  7.388	| 841.829	| 30	| 1691.031	| 879.216 |
-|16	| 849.216	|  4.932	| 844.284	| 30	|  846.747	| 879.216 |
-|17	| 849.216	|   2.47	| 846.747	| 30	|        0	| 879.216 |
-|18	| 849.216	|      0	| 849.216	| 30	| -849.216	| 879.216 |
+| month	 | costOfCredit | interestAmt | amortization | invoiceFee | outgoingBalance | cashFlow  |
+|--------|--------------|-------------|--------------|------------|-----------------|-----------|
+| 0      | 0.00         | 0.00        | 0.00         | 0.00       | 10000.00        | -10000.00 |
+| 1      | 29.17        | 29.17       | 0.00         | 30.00      | 10000.00        | 59.17     |
+| 2      | 29.17        | 29.17       | 0.00         | 30.00      | 10000.00        | 59.17     |
+| 3      | 29.17        | 29.17       | 0.00         | 30.00      | 10000.00        | 59.17     |
+| 4      | 29.17        | 29.17       | 0.00         | 30.00      | 10000.00        | 59.17     |
+| 5      | 29.17        | 29.17       | 0.00         | 30.00      | 10000.00        | 59.17     |
+| 6      | 29.17        | 29.17       | 0.00         | 30.00      | 10000.00        | 59.17     |
+| 7      | 849.22       | 29.17       | 820.05       | 30.00      | 9179.95         | 879.22    |
+| 8      | 849.22       | 26.77       | 822.44       | 30.00      | 8357.51         | 879.22    |
+| 9      | 849.22       | 24.38       | 824.84       | 30.00      | 7532.67         | 879.22    |
+| 10     | 849.22       | 21.97       | 827.25       | 30.00      | 6705.42         | 879.22    |
+| 11     | 849.22       | 19.56       | 829.66       | 30.00      | 5875.76         | 879.22    |
+| 12     | 849.22       | 17.14       | 832.08       | 30.00      | 5043.69         | 879.22    |
+| 13     | 849.22       | 14.71       | 834.51       | 30.00      | 4209.18         | 879.22    |
+| 14     | 849.22       | 12.28       | 836.94       | 30.00      | 3372.24         | 879.22    |
+| 15     | 849.22       | 9.84        | 839.38       | 30.00      | 2532.86         | 879.22    |
+| 16     | 849.22       | 7.39        | 841.83       | 30.00      | 1691.03         | 879.22    |
+| 17     | 849.22       | 4.93        | 844.28       | 30.00      | 846.75          | 879.22    |
+| 18     | 849.22       | 2.47        | 846.75       | 30.00      | 0.00            | 879.22    |
 
 ### Total Payment amount
-`totalPaymentAmount <- function(loanAmount, interestRate, tenureMonths, amortizationFreeMonths = 0, invoiceFee = 0)`
+`LoanCalculator.totalPaymentAmount(loanAmount, interestRate, tenureMonths, amortizationFreeMonths, invoiceFee)`
 
 Total Payment amount is the sum of all payments.
 #### Parameters
@@ -152,45 +153,46 @@ _returns_ a double containing the sum of all payments
 
 #### Example
 
-```r
-loanAmt <- 10000
-tenureMonths <- 1.5 * 12
-amortizationFreeMonths <- 6
-interest <- 3.5 / 100
-invoiceFee <- 30
+```groovy
+double loanAmt = 10000;
+int tenureMonths = (int) (1.5 * 12);
+int amortizationFreeMonths = 6;
+double interest = 3.5 / 100;
+double invoiceFee = 30
 
-totalAmt <- totalPaymentAmount(loanAmt, interest, tenureMonths, amortizationFreeMonths, invoiceFee)
-print(totalAmt)
+double totalAmt = totalPaymentAmount(loanAmt, interest, tenureMonths, amortizationFreeMonths, invoiceFee);
+print(totalAmt);
 ```
 ```
-[1] 11725.645213062116
+11725.645213062116
 ```
 
 ### Internal Rate of Return
-`irr <- function(cf, precision = 1e-6)`
+`double irr(PaymentPlan cf)`
+`double irr(double[] cf)`
 
 #### Parameters
-- _cf_ a vector of the cash flow (see the cashFlow or paymentPlan functions)
-- _precision_ The desired accuracy to calculate the irr with (optional, default 1e-6) precision is used in the
-  `uniroot` function and is assigned to the `tol` parameter of uniroot.
+- _cf_ a cash flow array or PaymentPlan (see the cashFlow or paymentPlan functions)
 #### Value
 _returns_ a double containing the internal return rate
 
 #### Example
 Given the cache flow above
 
-```r
-internalReturn <- irr(ppdf$cashFlow)
-print(internalReturn)
-```
+```groovy
+import static se.alipsa.financials.InternalRateOfReturn.*;
 
+var internalReturn = irr(paymentPlan.getColumn("cashFlow"));
+System.out.println(internalReturn);
 ```
-[1] 0.00291665871251
+output:
+```
+ 0.00291665871251
 ```
 
 ### Annual Percentage Rate (a.k.a. effective interest)
 
-`apr <- function(monthlyIrr)`
+`double apr(double monthlyIrr)`
 
 #### Parameters
 - _monthlyIrr_ the MONTHLY internal rate of return (monthly irr)
@@ -199,34 +201,37 @@ print(internalReturn)
 _Returns_ a double with the annual percentage rate
 
 #### Example
-```r
-annualPercentage <- apr(internalReturn)
+```groovy
+import static se.alipsa.financials.LoanCalculator.*;
+
+double annualPercentage = apr(internalReturn)
 print(annualPercentage)
 ```
 ```
-[1] 0.03556685438873
+0.08934409474458183
 ```
 
 ### Net present value
-
-`npv <- function(i, cf, t=seq(along=cf))`
+import static se.alipsa.financials.InternalRateOfReturn.*;
+`double npv(double[] cashFlow, double rate)`
 
 Net present value (NPV) is the difference between the present value
 of cash inflows and the present value of cash outflows over a period of time.
-This function produces the same results as Excel does which differs from packages such as FinCal.
+This function produces the same results as Excel does.
 
 #### Parameters
-- _i_ interest rate
-- _cf_ cache flow e.g. the cashFlow vector of the payment plan
-- _t_ time series (optional)
+- _cashFlow_ cache flow e.g. the cashFlow list of the payment plan
+- _rate_ interest rate
 
 #### Value
 _Returns_ a double with the net present value
 
 #### Examples
-```r
-print(npv(cf = c(-123400, 36200, 54800, 48100), i = 0.035))
+```groovy
+import se.alipsa.financials.InternalRateOfReturn.*
+
+System.out.println(npv(List.of(-123400, 36200, 54800, 48100), 0.035));
 ```
 ```
-[1] 5908.865636076123
+5908.8656360761
 ```

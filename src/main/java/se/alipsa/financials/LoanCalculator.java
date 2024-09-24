@@ -15,20 +15,20 @@ public class LoanCalculator {
   private LoanCalculator() {
   }
 
-  public static double totalPaymentAmount(double loanAmount, double interestRate, int tenureYears, int amortizationFreeMonths, int statementFee) {
-    double monthlyAnnuity = monthlyAnnuityAmount(loanAmount, interestRate, tenureYears, amortizationFreeMonths);
-    return totalPaymentAmount(loanAmount, interestRate, tenureYears, amortizationFreeMonths, statementFee, monthlyAnnuity);
+  public static double totalPaymentAmount(double loanAmount, double interestRate, int tenureMonths, int amortizationFreeMonths, int statementFee) {
+    double monthlyAnnuity = monthlyAnnuityAmount(loanAmount, interestRate, tenureMonths, amortizationFreeMonths);
+    return totalPaymentAmount(loanAmount, interestRate, tenureMonths, amortizationFreeMonths, statementFee, monthlyAnnuity);
   }
 
   /** If we know the monthly annuity we take advantage of that for faster execution */
-  public static double totalPaymentAmount(double loanAmount, double interestRate, int tenureYears, int amortizationFreeMonths, int statementFee, double monthlyAnnuity) {
+  public static double totalPaymentAmount(double loanAmount, double interestRate, int tenureMonths, int amortizationFreeMonths, int statementFee, double monthlyAnnuity) {
     double interestCostAmfreePeriod = loanAmount * interestRate / 12;
-    return (monthlyAnnuity + statementFee) * 12 * tenureYears - (monthlyAnnuity - interestCostAmfreePeriod) * amortizationFreeMonths;
+    return (monthlyAnnuity + statementFee) * tenureMonths - (monthlyAnnuity - interestCostAmfreePeriod) * amortizationFreeMonths;
   }
 
-  public static BigDecimal totalPaymentAmountRounded(double loanAmount, BigDecimal interestRate, int tenureYears, int amortizationFreeMonths, int statementFee) {
+  public static BigDecimal totalPaymentAmountRounded(double loanAmount, BigDecimal interestRate, int tenureMonths, int amortizationFreeMonths, int statementFee) {
     return BigDecimal
-        .valueOf(totalPaymentAmount(loanAmount, interestRate.doubleValue(), tenureYears, amortizationFreeMonths, statementFee))
+        .valueOf(totalPaymentAmount(loanAmount, interestRate.doubleValue(), tenureMonths, amortizationFreeMonths, statementFee))
         .setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -37,25 +37,25 @@ public class LoanCalculator {
    *
    * @param loanAmount the loan amount including startup fee
    * @param interestRate the nominal yearly interest
-   * @param tenureYears tenure in years
+   * @param tenureMonths tenure in months
    * @param amortizationFreemonths number of month amortization free
    * @return the monthyl annuity amount
    */
-  public static double monthlyAnnuityAmount(double loanAmount, double interestRate, int tenureYears, int amortizationFreemonths) {
+  public static double monthlyAnnuityAmount(double loanAmount, double interestRate, int tenureMonths, int amortizationFreemonths) {
     double montlyInterest = interestRate / 12;
-    int totalNumberOfPaymentPeriods = tenureYears * 12 - amortizationFreemonths;
+    int totalNumberOfPaymentPeriods = tenureMonths - amortizationFreemonths;
     return pmt(montlyInterest, totalNumberOfPaymentPeriods, loanAmount * -1);
   }
 
-  public static double dailyInterestAmount(int loanAmount, BigDecimal interestRate, int tenureYears, int amFreeMonths, int statementFee) {
-    List<Payment> paymentPlan = Cashflow.paymentPlan(loanAmount, interestRate, tenureYears,amFreeMonths, BigDecimal.valueOf(statementFee));
-    return dailyInterestAmount(paymentPlan, tenureYears);
+  public static double dailyInterestAmount(int loanAmount, BigDecimal interestRate, int tenureMonths, int amFreeMonths, int statementFee) {
+    List<Payment> paymentPlan = Cashflow.paymentPlan(loanAmount, interestRate, tenureMonths, amFreeMonths, BigDecimal.valueOf(statementFee));
+    return dailyInterestAmount(paymentPlan, tenureMonths);
   }
 
-  public static double dailyInterestAmount(List<Payment> paymentPlan, int tenureYears) {
+  public static double dailyInterestAmount(List<Payment> paymentPlan, int tenureMonths) {
     double totalInterest = paymentPlan.stream().mapToDouble(p -> nz(p.getInterestAmt())).sum();
     // 30.41666 is from Konsumentverkets guidelines https://www.konsumentverket.se/globalassets/publikationer/produkter-och-tjanster/finansiella-tjanster/kovfs-2011-01-allmanna-rad-konsumentkrediter-v3--konsumentverket.pdf
-    return totalInterest / (tenureYears * 12 * 30.41666);
+    return totalInterest / (tenureMonths * 30.41666);
   }
 
   /**
@@ -131,15 +131,15 @@ public class LoanCalculator {
 
   /**
    * @param loanAmt *INCLUDING* startupfee
-   * @param tenureYears the tenure in years
+   * @param tenureMonths the tenure in months
    * @param amortizationFreeMonths number of amortization free months
    * @param interest then nominal yearly interest
    * @param statementFee invoice fee
    * @return the effective interest rate
    */
-  public static double effectiveInterestRate(int loanAmt, BigDecimal interest, int tenureYears, int amortizationFreeMonths, Integer statementFee) {
+  public static double effectiveInterestRate(int loanAmt, BigDecimal interest, int tenureMonths, int amortizationFreeMonths, Integer statementFee) {
     //List<Payment> paymentPlanList = Cashflow.calculatePaymentPlan(loanAmt, tenureMonths, amortizationFreeMonths, interest, BigDecimal.valueOf(statementFee));
-    double[] cashFlow = Cashflow.cashFlow(loanAmt, interest, tenureYears, amortizationFreeMonths, statementFee);
+    double[] cashFlow = Cashflow.cashFlow(loanAmt, interest, tenureMonths, amortizationFreeMonths, statementFee);
     double irr = InternalRateOfReturn.irr(cashFlow);
     return LoanCalculator.apr(irr);
   }

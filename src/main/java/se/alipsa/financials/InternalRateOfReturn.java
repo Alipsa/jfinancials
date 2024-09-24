@@ -17,10 +17,10 @@ public class InternalRateOfReturn {
   private InternalRateOfReturn() {
   }
 
-  public static double irr(List<Payment> paymentPlans) {
-    double[] cashFlows = new double[paymentPlans.size()];
+  public static double irr(PaymentPlan paymentPlan) {
+    double[] cashFlows = new double[paymentPlan.size()];
     AtomicInteger i = new AtomicInteger(0);
-    paymentPlans.forEach(
+    paymentPlan.forEach(
         p -> cashFlows[i.getAndIncrement()] = p.getCacheFlow().doubleValue()
     );
     return irr(cashFlows);
@@ -47,7 +47,7 @@ public class InternalRateOfReturn {
 
     while ( iterations > 0 ) {
       testValue = (minValue+maxValue) / 2;
-      double npv= npv(cashFlow,testValue);
+      double npv= cfNpv(cashFlow,testValue);
       if ( Math.abs(flowOut+npv) < MIN_DIFF){
         break;
       } else if(Math.abs(flowOut) > npv){
@@ -60,7 +60,21 @@ public class InternalRateOfReturn {
     return testValue;
   }
 
-  public static double npv(double[] cashFlow, double rate){
+  public static double irr(List<Number> cashFlowCol){
+    return irr(toDoubleArray(cashFlowCol));
+  }
+
+  private static double[] toDoubleArray(List<Number> cashFlowCol) {
+    double[] cashFlows = new double[cashFlowCol.size()];
+    AtomicInteger i = new AtomicInteger(0);
+    cashFlowCol.forEach(p -> cashFlows[i.getAndIncrement()] = p.doubleValue() );
+    return cashFlows;
+  }
+
+  /*
+   * npv except the first entry, used in the irr calculation
+   */
+  private static double cfNpv(double[] cashFlow, double rate){
     double npv=0;
     for(int i=1; i < cashFlow.length; i++){
       npv += cashFlow[i] / Math.pow(1+rate, i);
@@ -68,4 +82,35 @@ public class InternalRateOfReturn {
     return npv;
   }
 
+  /**
+   * npv <- function(i, cf, t=seq(along=cf)) sum(cf/(1+i)^t)
+   *
+   * @param cashFlowCol
+   * @param rate
+   * @return
+   */
+  public static double npv(List<Number> cashFlowCol, double rate){
+    double cfs = 0;
+    int t = 1;
+    for(Number cf : cashFlowCol) {
+      cfs += cf.doubleValue() / Math.pow(1+rate, t++);
+    }
+    return cfs;
+  }
+
+  /**
+   * npv <- function(i, cf, t=seq(along=cf)) sum(cf/(1+i)^t)
+   *
+   * @param cashFlow an array of double
+   * @param rate the interest rate
+   * @return
+   */
+  public static double npv(double[] cashFlow, double rate){
+    double cfs = 0;
+    int t = 1;
+    for(Number cf : cashFlow) {
+      cfs += cf.doubleValue() / Math.pow(1+rate, t++);
+    }
+    return cfs;
+  }
 }

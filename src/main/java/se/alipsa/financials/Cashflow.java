@@ -21,22 +21,21 @@ public class Cashflow {
    * @param loanAmount including startupFee
    * @return a List of Payment
    */
-  public static List<Payment> paymentPlan(
+  public static PaymentPlan paymentPlan(
       int loanAmount,
       BigDecimal interest,
-      int tenureYears,
+      int tenureMonths,
       int amFreeMonths,
       BigDecimal invoiceFee) {
-    int tenureMonths = tenureYears * 12;
-    List<Payment> paymentPlans = new ArrayList<>(tenureMonths + 1);
+    PaymentPlan paymentPlan = new PaymentPlan(tenureMonths + 1);
     BigDecimal interestCostAmFreePeriod = BigDecimal.valueOf(loanAmount).multiply(interest).divide(BigDecimal.valueOf(12), SCALE, RoundingMode.HALF_UP);
-    BigDecimal monthlyAnnuity = BigDecimal.valueOf(LoanCalculator.monthlyAnnuityAmount(loanAmount, interest.doubleValue(), tenureYears, amFreeMonths));
+    BigDecimal monthlyAnnuity = BigDecimal.valueOf(LoanCalculator.monthlyAnnuityAmount(loanAmount, interest.doubleValue(), tenureMonths, amFreeMonths));
     Payment p = new Payment();
     p.setOutgoingBalance(BigDecimal.valueOf(loanAmount));
     p.setCacheFlow(BigDecimal.valueOf((long) loanAmount * -1));
-    paymentPlans.add(p);
+    paymentPlan.add(p);
     for (int month = 1; month <= tenureMonths; month++) {
-      Payment prev = paymentPlans.get(month - 1);
+      Payment prev = paymentPlan.get(month - 1);
       p = new Payment();
       p.setMonth(month);
       if (amFreeMonths >= month) {
@@ -49,9 +48,9 @@ public class Cashflow {
       p.setInvoiceFee(invoiceFee);
       p.setOutgoingBalance(prev.getOutgoingBalance().subtract(p.getAmortization()));
       p.setCacheFlow(p.getCostOfCredit().add(p.getInvoiceFee()));
-      paymentPlans.add(p);
+      paymentPlan.add(p);
     }
-    return paymentPlans;
+    return paymentPlan;
   }
 
   public static double[] cashFlow(List<Payment> paymentPlan) {
@@ -64,12 +63,11 @@ public class Cashflow {
 
   public static double[] cashFlow(int loanAmount,
                                   BigDecimal interest,
-                                  int tenureYears,
+                                  int tenureMonths,
                                   int amFreeMonths,
                                   Integer invoiceFee) {
     double interestCostAmFreePeriod = loanAmount * interest.doubleValue() / 12;
-    int tenureMonths = tenureYears * 12;
-    double monthlyAnnuity = LoanCalculator.monthlyAnnuityAmount(loanAmount, interest.doubleValue(), tenureYears, amFreeMonths);
+    double monthlyAnnuity = LoanCalculator.monthlyAnnuityAmount(loanAmount, interest.doubleValue(), tenureMonths, amFreeMonths);
     List<Double> p = new ArrayList<>(tenureMonths + 1);
     p.add(loanAmount * -1.0);
     for (int month = 1; month <= tenureMonths; month++) {

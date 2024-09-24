@@ -1,15 +1,19 @@
 package se.alipsa.financials;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Payment {
+
+  public static final List<String> columnNames = List.of("month", "costOfCredit", "interestAmt", "amortization", "invoiceFee", "outgoingBalance", "cashFlow");
+
   private int month;
-  private BigDecimal costOfCredit;
-  private BigDecimal interestAmt;
-  private BigDecimal amortization;
-  private BigDecimal invoiceFee;
-  private BigDecimal outgoingBalance;
-  private BigDecimal cacheFlow;
+  private BigDecimal costOfCredit = BigDecimal.ZERO;
+  private BigDecimal interestAmt = BigDecimal.ZERO;
+  private BigDecimal amortization = BigDecimal.ZERO;
+  private BigDecimal invoiceFee = BigDecimal.ZERO;
+  private BigDecimal outgoingBalance = BigDecimal.ZERO;
+  private BigDecimal cacheFlow = BigDecimal.ZERO;
 
   public int getMonth() {
     return month;
@@ -65,5 +69,36 @@ public class Payment {
 
   public void setCacheFlow(BigDecimal cacheFlow) {
     this.cacheFlow = cacheFlow;
+  }
+
+  public Number get(int index) {
+    return switch (index) {
+      case 0 -> month;
+      case 1 -> costOfCredit;
+      case 2 -> interestAmt;
+      case 3 -> amortization;
+      case 4 -> invoiceFee;
+      case 5 -> outgoingBalance;
+      case 6 -> cacheFlow;
+      default -> null;
+    };
+  }
+
+  public Number get(String name) {
+    return get(columnNames.indexOf(name));
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("Payment{");
+    sb.append("month=").append(month);
+    sb.append(", costOfCredit=").append(costOfCredit);
+    sb.append(", interestAmt=").append(interestAmt);
+    sb.append(", amortization=").append(amortization);
+    sb.append(", invoiceFee=").append(invoiceFee);
+    sb.append(", outgoingBalance=").append(outgoingBalance);
+    sb.append(", cacheFlow=").append(cacheFlow);
+    sb.append('}');
+    return sb.toString();
   }
 }
