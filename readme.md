@@ -39,7 +39,7 @@ The following data:
 | Monthly payment | 	909.59 |
 
 Then the Monthly payment can be calculated as
-`LoanCalculator.pmt(3.5/100/12, 60, -50000)`
+`LoanCalculator.pmt(3.5/100, 60, -50000)` ≈ 2004.43
 
 ### Monthly Annuity Amount
 `LoanCalculator.monthlyAnnuityAmount(loanAmount, interestRate, tenureMonths, amortizationFreemonths = 0, type = 0)`

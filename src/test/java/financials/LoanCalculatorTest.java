@@ -125,4 +125,9 @@ public class LoanCalculatorTest {
     bd = bd.setScale(decimals, RoundingMode.HALF_UP);
     return bd.doubleValue();
   }
+
+  @Test
+  void testPmt() {
+    assertEquals(2004.4310660109, LoanCalculator.pmt(3.5/100, 60, -50000), 1e-8);
+  }
 }
