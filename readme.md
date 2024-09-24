@@ -1,5 +1,5 @@
 # jfinancials
-Java library for working with financial data. Based on the financials R package (also created by me).
+Java library for working with financial data. Based on the [financials R package](https://github.com/Alipsa/financials).
 
 To use it add the following dependency to your pom
 
