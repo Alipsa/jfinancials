@@ -1,4 +1,4 @@
-package se.alipsa.financials;
+package se.alipsa.jfinancials;
 
 import static java.math.BigDecimal.ONE;
 

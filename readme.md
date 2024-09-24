@@ -10,7 +10,7 @@ To use it add the following dependency to your pom
     <version>1.0.0</version>
 </dependency>
 ```
-All methods of the public api are in the se.alipsa.financials.Financials class
+All methods of the public api are in the se.alipsa.jfinancials.Financials class
 
 ### Payment
 `double pmt(interestRate, nper, pv, fv = 0, type = 0)`
@@ -155,7 +155,7 @@ _returns_ a double containing the sum of all payments
 #### Example
 
 ```groovy
-import static se.alipsa.financials.Financials.*;
+import static se.alipsa.jfinancials.Financials.*;
 
 double loanAmt = 10000;
 int tenureMonths = (int) (1.5 * 12);
@@ -183,7 +183,7 @@ _returns_ a double containing the internal return rate
 Given the cache flow above
 
 ```groovy
-import static se.alipsa.financials.Financials.*;
+import static se.alipsa.jfinancials.Financials.*;
 
 var internalReturn = irr(paymentPlan.getColumn("cashFlow"));
 System.out.println(internalReturn);
@@ -204,8 +204,9 @@ output:
 _Returns_ a double with the annual percentage rate
 
 #### Example
+
 ```groovy
-import static se.alipsa.financials.Financials.*;
+import static se.alipsa.jfinancials.Financials.*;
 
 double annualPercentage = apr(internalReturn)
 print(annualPercentage)
@@ -229,8 +230,9 @@ This function produces the same results as Excel does.
 _Returns_ a double with the net present value
 
 #### Examples
+
 ```groovy
-import se.alipsa.financials.Financials.*
+import se.alipsa.jfinancials.Financials.*
 
 System.out.println(npv(List.of(-123400, 36200, 54800, 48100), 0.035));
 ```

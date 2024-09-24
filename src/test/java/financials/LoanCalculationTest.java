@@ -2,7 +2,7 @@ package financials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static se.alipsa.financials.Financials.*;
+import static se.alipsa.jfinancials.Financials.*;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

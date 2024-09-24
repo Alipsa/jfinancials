@@ -1,4 +1,4 @@
-package se.alipsa.financials;
+package se.alipsa.jfinancials;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

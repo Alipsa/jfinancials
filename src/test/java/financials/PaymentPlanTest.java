@@ -1,13 +1,12 @@
 package financials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static se.alipsa.financials.Financials.*;
+import static se.alipsa.jfinancials.Financials.*;
 
 import org.junit.jupiter.api.Test;
-import se.alipsa.financials.*;
+import se.alipsa.jfinancials.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class PaymentPlanTest {
 
