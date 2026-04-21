@@ -41,7 +41,7 @@ public class Financials {
     BigDecimal monthlyAnnuity = BigDecimal.valueOf(monthlyAnnuityAmount(loanAmount, interest.doubleValue(), tenureMonths, amFreeMonths));
     Payment p = new Payment();
     p.setOutgoingBalance(BigDecimal.valueOf(loanAmount));
-    p.setCacheFlow(BigDecimal.valueOf((long) loanAmount * -1));
+    p.setCashFlow(BigDecimal.valueOf((long) loanAmount * -1));
     paymentPlan.add(p);
     for (int month = 1; month <= tenureMonths; month++) {
       Payment prev = paymentPlan.get(month - 1);
@@ -56,7 +56,7 @@ public class Financials {
       p.setAmortization(p.getCostOfCredit().subtract(p.getInterestAmt()));
       p.setInvoiceFee(invoiceFee);
       p.setOutgoingBalance(prev.getOutgoingBalance().subtract(p.getAmortization()));
-      p.setCacheFlow(p.getCostOfCredit().add(p.getInvoiceFee()));
+      p.setCashFlow(p.getCostOfCredit().add(p.getInvoiceFee()));
       paymentPlan.add(p);
     }
     return paymentPlan;
@@ -65,7 +65,7 @@ public class Financials {
   public static double[] cashFlow(List<Payment> paymentPlan) {
     double[] cashFlow = new double[paymentPlan.size()];
     for (int i = 0; i < cashFlow.length; i++) {
-      cashFlow[i] = paymentPlan.get(i).getCacheFlow().doubleValue();
+      cashFlow[i] = paymentPlan.get(i).getCashFlow().doubleValue();
     }
     return cashFlow;
   }
@@ -86,8 +86,8 @@ public class Financials {
       } else {
         costOfCredit = monthlyAnnuity;
       }
-      double cacheFlow = costOfCredit + invoiceFee.doubleValue();
-      p.add(cacheFlow);
+      double cashFlow = costOfCredit + invoiceFee.doubleValue();
+      p.add(cashFlow);
     }
     double[] cashFlows = new double[p.size()];
     for (int i = 0; i < cashFlows.length; i++) {
@@ -100,7 +100,7 @@ public class Financials {
     double[] cashFlows = new double[paymentPlan.size()];
     AtomicInteger i = new AtomicInteger(0);
     paymentPlan.forEach(
-        p -> cashFlows[i.getAndIncrement()] = p.getCacheFlow().doubleValue()
+        p -> cashFlows[i.getAndIncrement()] = p.getCashFlow().doubleValue()
     );
     return irr(cashFlows);
   }
@@ -220,9 +220,9 @@ public class Financials {
    * @return the monthyl annuity amount
    */
   public static double monthlyAnnuityAmount(double loanAmount, double interestRate, int tenureMonths, int amortizationFreemonths) {
-    double montlyInterest = interestRate / 12;
+    double monthlyInterest = interestRate / 12;
     int totalNumberOfPaymentPeriods = tenureMonths - amortizationFreemonths;
-    return pmt(montlyInterest, totalNumberOfPaymentPeriods, loanAmount * -1);
+    return pmt(monthlyInterest, totalNumberOfPaymentPeriods, loanAmount * -1);
   }
 
   public static double dailyInterestAmount(int loanAmount, BigDecimal interestRate, int tenureMonths, int amFreeMonths, int statementFee) {

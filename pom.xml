@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>jfinancials</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <name>jfinancials</name>
     <description>Java library for dealing with financial data</description>
@@ -33,8 +33,7 @@
     </scm>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

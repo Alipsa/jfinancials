@@ -23,7 +23,7 @@ public class PaymentPlanTest {
 
     Payment m0 = paymentPlan.get(0);
     assertEquals(BigDecimal.valueOf(loanAmt), m0.getOutgoingBalance());
-    assertEquals(BigDecimal.valueOf(loanAmt * -1), m0.getCacheFlow());
+    assertEquals(BigDecimal.valueOf(loanAmt * -1), m0.getCashFlow());
 
     verifyPayment(1, 854.21, 284.50, 569.70, invoiceFee,
         49_859.30, 884.21, paymentPlan.get(1));
@@ -77,7 +77,7 @@ public class PaymentPlanTest {
 
     Payment m0 = paymentPlan.get(0);
     assertEquals(BigDecimal.valueOf(loanAmt), m0.getOutgoingBalance());
-    assertEquals(BigDecimal.valueOf(loanAmt * -1), m0.getCacheFlow());
+    assertEquals(BigDecimal.valueOf(loanAmt * -1), m0.getCashFlow());
 
     verifyPayment(1, 447.75, 447.75, 0, invoiceFee,
         100_429, 447.75, paymentPlan.get(1));
@@ -109,11 +109,11 @@ public class PaymentPlanTest {
     assertEquals(4563.12, p23.get(3).doubleValue(), delta, "amortization");
     assertEquals(invoiceFee, p23.get(4), "invoiceFee");
     assertEquals(4583.46, p23.get(5).doubleValue(), delta, "outgoingBalance");
-    assertEquals(4603.89, p23.get(6).doubleValue(), delta, "cacheFlow");
+    assertEquals(4603.89, p23.get(6).doubleValue(), delta, "cashFlow");
   }
 
   private void verifyPayment(int month, double costOfCredit, double interestAmt, double amortization,
-                             BigDecimal invoiceFee, double outGoingBalance, double cacheFlow, Payment p) {
+                             BigDecimal invoiceFee, double outGoingBalance, double cashFlow, Payment p) {
     double delta = 0.01;
     assertEquals(month, p.getMonth(), "month");
     assertEquals(costOfCredit, p.getCostOfCredit().doubleValue(), delta, "costOfCredit");
@@ -121,6 +121,6 @@ public class PaymentPlanTest {
     assertEquals(amortization, p.getAmortization().doubleValue(), delta, "amortization");
     assertEquals(invoiceFee, p.getInvoiceFee(), "invoiceFee");
     assertEquals(outGoingBalance, p.getOutgoingBalance().doubleValue(), delta, "outgoingBalance");
-    assertEquals(cacheFlow, p.getCacheFlow().doubleValue(), delta, "cacheFlow");
+    assertEquals(cashFlow, p.getCashFlow().doubleValue(), delta, "cashFlow");
   }
 }

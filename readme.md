@@ -7,7 +7,7 @@ To use it add the following dependency to your pom
 <dependency>
     <groupId>se.alipsa</groupId>
     <artifactId>jfinancials</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 All methods of the public api are in the se.alipsa.jfinancials.Financials class
@@ -76,12 +76,12 @@ The monthly annuity amount would be
 #### Parameters
 - _loanAmount_ the total loan amount including capitalized fees (e.g. startup fee)
 - _interestRate_ the annual nominal interest
-- _tenureYears_ the tenure of the loan in number of years
+- _tenureMonths_ the tenure of the loan in number of months
 - _amortizationFreeMonths_ the number of initial amortization free months, default to 0
 - _invoiceFee_ a fee for each statement invoiced, default to 0
 
 #### Value
-_returns_ an array of doubles of cachFlow entries for each period
+_returns_ an array of doubles of cashFlow entries for each period
 
 #### Example
 ```r

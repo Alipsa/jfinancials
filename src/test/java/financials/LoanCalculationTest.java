@@ -11,7 +11,6 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 
 public class LoanCalculationTest {
-  private static final System.Logger LOG = System.getLogger(LoanCalculationTest.class.getName());
 
   @Test
   public void testPaymentCalculations() {

@@ -53,7 +53,7 @@ public class PaymentPlan extends ArrayList<Payment> {
       row.add(p.getAmortization());
       row.add(p.getInvoiceFee());
       row.add(p.getOutgoingBalance());
-      row.add(p.getCacheFlow());
+      row.add(p.getCashFlow());
       rows.add(row);
     }
     return rows;

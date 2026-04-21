@@ -13,7 +13,7 @@ public class Payment {
   private BigDecimal amortization = BigDecimal.ZERO;
   private BigDecimal invoiceFee = BigDecimal.ZERO;
   private BigDecimal outgoingBalance = BigDecimal.ZERO;
-  private BigDecimal cacheFlow = BigDecimal.ZERO;
+  private BigDecimal cashFlow = BigDecimal.ZERO;
 
   public int getMonth() {
     return month;
@@ -63,12 +63,12 @@ public class Payment {
     this.outgoingBalance = outgoingBalance;
   }
 
-  public BigDecimal getCacheFlow() {
-    return cacheFlow;
+  public BigDecimal getCashFlow() {
+    return cashFlow;
   }
 
-  public void setCacheFlow(BigDecimal cacheFlow) {
-    this.cacheFlow = cacheFlow;
+  public void setCashFlow(BigDecimal cashFlow) {
+    this.cashFlow = cashFlow;
   }
 
   public Number get(int index) {
@@ -79,8 +79,8 @@ public class Payment {
       case 3 -> amortization;
       case 4 -> invoiceFee;
       case 5 -> outgoingBalance;
-      case 6 -> cacheFlow;
-      default -> null;
+      case 6 -> cashFlow;
+      default -> throw new IndexOutOfBoundsException("No column at index " + index);
     };
   }
 
@@ -97,7 +97,7 @@ public class Payment {
     sb.append(", amortization=").append(amortization);
     sb.append(", invoiceFee=").append(invoiceFee);
     sb.append(", outgoingBalance=").append(outgoingBalance);
-    sb.append(", cacheFlow=").append(cacheFlow);
+    sb.append(", cashFlow=").append(cashFlow);
     sb.append('}');
     return sb.toString();
   }
