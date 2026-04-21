@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
-# Release script: verifies the project, tags the release, and publishes to
-# Maven Central via the central-publishing-maven-plugin (release profile).
+# Release script: verifies the project and publishes to Maven Central via
+# the central-publishing-maven-plugin (release profile).
 #
 # Usage: ./release.sh
 # ---------------------------------------------------------------------------
@@ -44,4 +44,4 @@ mvn verify --no-transfer-progress
 info "Publishing to Maven Central..."
 mvn deploy -Prelease --no-transfer-progress
 
-info "Release $tag published successfully."
+info "Release $version published successfully."
