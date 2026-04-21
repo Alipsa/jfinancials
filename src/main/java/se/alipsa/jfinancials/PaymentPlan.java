@@ -7,18 +7,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A Payment plan is a List of Payments with some additional sugar making it almost
- * like a Matrix or at least simple to create a Matrix from using
+ * A Payment plan is a List of Payments with some additional sugar making it almost like a Matrix or
+ * at least simple to create a Matrix from using
  * Matrix.builder().rows(myPp.rowList()).columnNames(myPp.getColumnNames()).build()
  */
 public class PaymentPlan extends ArrayList<Payment> {
 
   private static final List<String> columnNames = Payment.columnNames;
-  /**
-   * Default constructor
-   */
-  public PaymentPlan() {
-  }
+
+  /** Default constructor */
+  public PaymentPlan() {}
 
   /**
    * Create anew PaymentPlan from an existing one
@@ -30,7 +28,8 @@ public class PaymentPlan extends ArrayList<Payment> {
   }
 
   /**
-   * create an empty payment pln with the capacity specified (it can still grow beyond that if needed)
+   * create an empty payment pln with the capacity specified (it can still grow beyond that if
+   * needed)
    *
    * @param initialCapacity the estimated size of the plan
    */
@@ -65,20 +64,25 @@ public class PaymentPlan extends ArrayList<Payment> {
    * @return a list of the headers (names of each 'column')
    */
   public List<String> getColumnNames() {
-    return columnNames;
+    return List.copyOf(columnNames);
   }
-
-
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(String.join(",", getColumnNames())).append("\n");
-    toRowList().forEach(row ->
-      sb.append(row.stream()
-          .map(v -> String.valueOf(v instanceof BigDecimal ? ((BigDecimal) v).setScale(2, RoundingMode.HALF_UP) : v))
-          .collect(Collectors.joining(","))
-      ).append("\n")
-    );
+    toRowList()
+        .forEach(
+            row ->
+                sb.append(
+                        row.stream()
+                            .map(
+                                v ->
+                                    String.valueOf(
+                                        v instanceof BigDecimal
+                                            ? ((BigDecimal) v).setScale(2, RoundingMode.HALF_UP)
+                                            : v))
+                            .collect(Collectors.joining(",")))
+                    .append("\n"));
     return sb.toString();
   }
 

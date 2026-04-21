@@ -5,7 +5,15 @@ import java.util.List;
 
 public class Payment {
 
-  public static final List<String> columnNames = List.of("month", "costOfCredit", "interestAmt", "amortization", "invoiceFee", "outgoingBalance", "cashFlow");
+  public static final List<String> columnNames =
+      List.of(
+          "month",
+          "costOfCredit",
+          "interestAmt",
+          "amortization",
+          "invoiceFee",
+          "outgoingBalance",
+          "cashFlow");
 
   private int month;
   private BigDecimal costOfCredit = BigDecimal.ZERO;
