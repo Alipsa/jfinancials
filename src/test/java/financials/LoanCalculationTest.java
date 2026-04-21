@@ -5,15 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static se.alipsa.jfinancials.Financials.*;
 
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
 public class LoanCalculationTest {
-  private static final Logger LOG = LoggerFactory.getLogger(LoanCalculationTest.class);
+  private static final System.Logger LOG = System.getLogger(LoanCalculationTest.class.getName());
 
   @Test
   public void testPaymentCalculations() {
