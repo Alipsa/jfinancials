@@ -112,6 +112,27 @@ public class PaymentPlanTest {
     assertEquals(4603.89, p23.get(6).doubleValue(), delta, "cashFlow");
   }
 
+  @Test
+  void testCashFlowFromPaymentList() {
+    PaymentPlan plan = paymentPlan(50_429, BigDecimal.valueOf(0.0677), 6 * 12, 0, BigDecimal.valueOf(30));
+    double[] cf = cashFlow(plan);
+    assertEquals(plan.size(), cf.length);
+    for (int i = 0; i < plan.size(); i++) {
+      assertEquals(plan.get(i).getCashFlow().doubleValue(), cf[i], 1e-9, "cashFlow at index " + i);
+    }
+  }
+
+  @Test
+  void testDailyInterestAmountFromPaymentList() {
+    int loanAmt = 50_429;
+    int tenure = 6 * 12;
+    BigDecimal interest = BigDecimal.valueOf(0.0677);
+    PaymentPlan plan = paymentPlan(loanAmt, interest, tenure, 0, BigDecimal.valueOf(30));
+    double fromList = dailyInterestAmount(plan, tenure);
+    double fromParams = dailyInterestAmount(loanAmt, interest, tenure, 0, 30);
+    assertEquals(fromParams, fromList, 1e-9);
+  }
+
   private void verifyPayment(int month, double costOfCredit, double interestAmt, double amortization,
                              BigDecimal invoiceFee, double outGoingBalance, double cashFlow, Payment p) {
     double delta = 0.01;

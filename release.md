@@ -1,6 +1,6 @@
 # jfinancials, release history
 
-## v1.1.0, in progress
+## v1.1.0, 2026-04-21
 - Remove dependency on slf4j in favor of the built-in `System.Logger` (java.lang, no extra dependency)
 - Upgrade JUnit dependency to use the BOM (`org.junit:junit-bom:6.0.3`)
 - Upgrade plugins: maven-enforcer-plugin 3.6.2, maven-gpg-plugin 3.2.8, maven-javadoc-plugin 3.12.0, maven-site-plugin 3.21.0, maven-source-plugin 3.4.0, maven-surefire-plugin 3.5.5, versions-maven-plugin 2.21.0
@@ -9,6 +9,7 @@
 - `Payment.get(int)` now throws `IndexOutOfBoundsException` for unknown indices instead of returning `null`
 - Replace `maven.compiler.source`/`maven.compiler.target` with `maven.compiler.release` for correct cross-compilation
 - Fix readme: version, `tenureYears` → `tenureMonths` in cashFlow parameter docs, `cachFlow` typo
+- increase test coverage
 
 ## v1.0.0, 2024-09-25
 Initial version of the library with the following features:

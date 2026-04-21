@@ -7,6 +7,7 @@ import static se.alipsa.jfinancials.Financials.*;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
@@ -126,5 +127,63 @@ public class LoanCalculationTest {
   @Test
   void testPmt() {
     assertEquals(2004.4310660109, pmt(3.5/100, 60, -50000), 1e-8);
+  }
+
+  @Test
+  void testPmtFvOverload() {
+    double base = pmt(3.5/100, 60, -50000);
+    assertEquals(base, pmt(3.5/100, 60, -50000, 0), 1e-8, "fv=0 should match 3-param");
+  }
+
+  @Test
+  void testPmtFvTypeOverload() {
+    double base = pmt(3.5/100, 60, -50000);
+    assertEquals(base, pmt(3.5/100, 60, -50000, 0, 0), 1e-8, "fv=0,type=0 should match 3-param");
+    // payment at start of period (type=1) is smaller by factor 1/(1+r)
+    assertEquals(base / (1 + 3.5/100), pmt(3.5/100, 60, -50000, 0, 1), 1e-6, "type=1 payment");
+  }
+
+  @Test
+  void testPmtBigDecimal() {
+    double expected = pmt(3.5/100, 60, -50000);
+    BigDecimal r = BigDecimal.valueOf(3.5/100);
+    BigDecimal pv = BigDecimal.valueOf(-50000);
+    assertEquals(expected, pmt(r, 60, pv).doubleValue(), 1e-4, "BigDecimal pmt(3)");
+    assertEquals(expected, pmt(r, 60, pv, BigDecimal.ZERO).doubleValue(), 1e-4, "BigDecimal pmt(4)");
+    assertEquals(expected, pmt(r, 60, pv, BigDecimal.ZERO, 0).doubleValue(), 1e-4, "BigDecimal pmt(5)");
+  }
+
+  @Test
+  void testTotalPaymentAmountWithPrecomputedAnnuity() {
+    double loanAmt = 100_000;
+    double interest = 0.0495;
+    int tenure = 3 * 12;
+    int amFree = 0;
+    int fee = 30;
+    double annuity = monthlyAnnuityAmount(loanAmt, interest, tenure, amFree);
+    double expected = totalPaymentAmount(loanAmt, interest, tenure, amFree, fee);
+    assertEquals(expected, totalPaymentAmount(loanAmt, interest, tenure, amFree, fee, annuity), 1e-6);
+  }
+
+  @Test
+  void testTotalPaymentAmountRounded() {
+    BigDecimal result = totalPaymentAmountRounded(100_000, BigDecimal.valueOf(0.0495), 3 * 12, 0, 30, 2);
+    assertEquals(2, result.scale());
+    assertEquals(108894.0, result.doubleValue(), 1.0);
+  }
+
+  @Test
+  void testNz() {
+    assertEquals(0, nz((Integer) null));
+    assertEquals(7, nz(7));
+    assertEquals(0.0, nz((Double) null));
+    assertEquals(3.14, nz(3.14));
+    assertEquals(0.0, nz((BigDecimal) null));
+    assertEquals(1.5, nz(BigDecimal.valueOf(1.5)));
+    assertEquals(0L, nz((Long) null));
+    assertEquals(42L, nz(42L));
+    assertEquals(0L, nz((BigInteger) null));
+    assertEquals(100L, nz(BigInteger.valueOf(100)));
+    assertEquals(100L, nz(BigInteger.valueOf(-100)), "nz takes absolute value for BigInteger");
   }
 }
