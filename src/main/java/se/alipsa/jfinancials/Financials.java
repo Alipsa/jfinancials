@@ -9,21 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/** Utility class providing financial calculation methods for loans and investments. */
 public class Financials {
   // Empirical tests comparing with Excel gives 9 as the lowest possible value for 0.01 error margin
   private static final int SCALE = 9;
 
-  /** Number of iterations */
+  /** Number of iterations used by the bisection IRR solver. */
   public static final int MAX_ITERATIONS = 1000;
 
-  /** Minimum difference */
+  /** Minimum difference used as the convergence criterion in the IRR solver. */
   public static final double MIN_DIFF = 1E-7;
 
   private Financials() {}
 
   /**
    * Create a PaymentPlan which essentially is a List of payments with some additional syntactic
-   * sugar
+   * sugar.
    *
    * @param loanAmount including startupFee
    * @param interest the yearly interest rate
@@ -72,6 +73,12 @@ public class Financials {
     return paymentPlan;
   }
 
+  /**
+   * Extracts the cash flow values from an existing payment plan as a primitive array.
+   *
+   * @param paymentPlan the list of payments to extract from
+   * @return an array of cash flow values, one per payment period
+   */
   public static double[] cashFlow(List<Payment> paymentPlan) {
     double[] cashFlow = new double[paymentPlan.size()];
     for (int i = 0; i < cashFlow.length; i++) {
@@ -80,6 +87,16 @@ public class Financials {
     return cashFlow;
   }
 
+  /**
+   * Calculates the cash flow array for a loan from its parameters.
+   *
+   * @param loanAmount the total loan amount including capitalized fees
+   * @param interest the annual nominal interest rate
+   * @param tenureMonths the total tenure of the loan in months
+   * @param amFreeMonths the number of initial amortization-free months
+   * @param invoiceFee the per-period invoice fee charged to the borrower
+   * @return an array of cash flow values starting with the (negative) loan disbursement
+   */
   public static double[] cashFlow(
       int loanAmount, BigDecimal interest, int tenureMonths, int amFreeMonths, Integer invoiceFee) {
     double interestCostAmFreePeriod = loanAmount * interest.doubleValue() / 12;
@@ -104,6 +121,12 @@ public class Financials {
     return cashFlows;
   }
 
+  /**
+   * Calculates the internal rate of return for a payment plan.
+   *
+   * @param paymentPlan the payment plan whose cash flows are used
+   * @return the monthly internal rate of return
+   */
   public static double irr(PaymentPlan paymentPlan) {
     double[] cashFlows = new double[paymentPlan.size()];
     AtomicInteger i = new AtomicInteger(0);
@@ -144,6 +167,12 @@ public class Financials {
     return testValue;
   }
 
+  /**
+   * Calculates the internal rate of return from a list of cash flow values.
+   *
+   * @param cashFlowCol the cash flow values; the first entry must be the (negative) initial outflow
+   * @return the monthly internal rate of return
+   */
   public static double irr(List<Number> cashFlowCol) {
     return irr(toDoubleArray(cashFlowCol));
   }
@@ -167,11 +196,13 @@ public class Financials {
   }
 
   /**
-   * npv = function(i, cf, t=seq(along=cf)) sum(cf/(1+i)^t)
+   * Calculates the net present value of a series of cash flows.
    *
-   * @param cashFlowCol
-   * @param rate
-   * @return
+   * <p>Equivalent to R's {@code npv = function(i, cf, t=seq(along=cf)) sum(cf/(1+i)^t)}.
+   *
+   * @param cashFlowCol the list of cash flow values
+   * @param rate the discount rate per period
+   * @return the net present value
    */
   public static double npv(List<Number> cashFlowCol, double rate) {
     double cfs = 0;
@@ -183,11 +214,13 @@ public class Financials {
   }
 
   /**
-   * npv = function(i, cf, t=seq(along=cf)) sum(cf/(1+i)^t)
+   * Calculates the net present value of a series of cash flows.
    *
-   * @param cashFlow an array of double
-   * @param rate the interest rate
-   * @return
+   * <p>Equivalent to R's {@code npv = function(i, cf, t=seq(along=cf)) sum(cf/(1+i)^t)}.
+   *
+   * @param cashFlow an array of cash flow values
+   * @param rate the discount rate per period
+   * @return the net present value
    */
   public static double npv(double[] cashFlow, double rate) {
     double cfs = 0;
@@ -198,6 +231,16 @@ public class Financials {
     return cfs;
   }
 
+  /**
+   * Calculates the total amount paid over the life of a loan.
+   *
+   * @param loanAmount the total loan amount including capitalized fees
+   * @param interestRate the annual nominal interest rate
+   * @param tenureMonths the total tenure of the loan in months
+   * @param amortizationFreeMonths the number of initial amortization-free months
+   * @param statementFee the per-period invoice fee
+   * @return the total payment amount
+   */
   public static double totalPaymentAmount(
       double loanAmount,
       double interestRate,
@@ -215,7 +258,18 @@ public class Financials {
         monthlyAnnuity);
   }
 
-  /** If we know the monthly annuity we take advantage of that for faster execution */
+  /**
+   * Calculates the total amount paid over the life of a loan using a pre-computed monthly annuity,
+   * which avoids recalculating it when it is already known.
+   *
+   * @param loanAmount the total loan amount including capitalized fees
+   * @param interestRate the annual nominal interest rate
+   * @param tenureMonths the total tenure of the loan in months
+   * @param amortizationFreeMonths the number of initial amortization-free months
+   * @param statementFee the per-period invoice fee
+   * @param monthlyAnnuity the pre-computed monthly annuity amount
+   * @return the total payment amount
+   */
   public static double totalPaymentAmount(
       double loanAmount,
       double interestRate,
@@ -228,6 +282,18 @@ public class Financials {
         - (monthlyAnnuity - interestCostAmfreePeriod) * amortizationFreeMonths;
   }
 
+  /**
+   * Calculates the total amount paid over the life of a loan, rounded to the specified number of
+   * decimal places.
+   *
+   * @param loanAmount the total loan amount including capitalized fees
+   * @param interestRate the annual nominal interest rate
+   * @param tenureMonths the total tenure of the loan in months
+   * @param amortizationFreeMonths the number of initial amortization-free months
+   * @param statementFee the per-period invoice fee
+   * @param decimals the number of decimal places to round to
+   * @return the total payment amount rounded to the specified scale
+   */
   public static BigDecimal totalPaymentAmountRounded(
       double loanAmount,
       BigDecimal interestRate,
@@ -246,11 +312,14 @@ public class Financials {
   }
 
   /**
+   * Calculates the monthly annuity amount for a loan, i.e. the fixed payment covering both interest
+   * and principal repayment each month after the amortization-free period.
+   *
    * @param loanAmount the loan amount including startup fee
-   * @param interestRate the nominal yearly interest
+   * @param interestRate the nominal yearly interest rate
    * @param tenureMonths tenure in months
-   * @param amortizationFreemonths number of month amortization free
-   * @return the monthyl annuity amount
+   * @param amortizationFreemonths number of amortization-free months
+   * @return the monthly annuity amount
    */
   public static double monthlyAnnuityAmount(
       double loanAmount, double interestRate, int tenureMonths, int amortizationFreemonths) {
@@ -259,6 +328,16 @@ public class Financials {
     return pmt(monthlyInterest, totalNumberOfPaymentPeriods, loanAmount * -1);
   }
 
+  /**
+   * Calculates the average daily interest amount for a loan.
+   *
+   * @param loanAmount the total loan amount including capitalized fees
+   * @param interestRate the annual nominal interest rate
+   * @param tenureMonths the total tenure of the loan in months
+   * @param amFreeMonths the number of initial amortization-free months
+   * @param statementFee the per-period invoice fee
+   * @return the average daily interest amount
+   */
   public static double dailyInterestAmount(
       int loanAmount,
       BigDecimal interestRate,
@@ -271,6 +350,13 @@ public class Financials {
     return dailyInterestAmount(paymentPlan, tenureMonths);
   }
 
+  /**
+   * Calculates the average daily interest amount from an existing payment plan.
+   *
+   * @param paymentPlan the list of payments to sum interest from
+   * @param tenureMonths the total tenure of the loan in months
+   * @return the average daily interest amount
+   */
   public static double dailyInterestAmount(List<Payment> paymentPlan, int tenureMonths) {
     double totalInterest = paymentPlan.stream().mapToDouble(p -> nz(p.getInterestAmt())).sum();
     // 30.41666 is from Konsumentverkets guidelines
@@ -280,7 +366,7 @@ public class Financials {
 
   /**
    * Emulates Excel/Calc's PMT(interest_rate, number_payments, PV, FV, Type) function, which
-   * calculates the payments for a loan or the future value of an investment
+   * calculates the payments for a loan or the future value of an investment.
    *
    * @param r - periodic interest rate represented as a decimal.
    * @param nper - number of total payments / periods.
@@ -297,6 +383,11 @@ public class Financials {
   /**
    * Overloaded pmt() call omitting type, which defaults to 0.
    *
+   * @param r periodic interest rate represented as a decimal
+   * @param nper number of total payments / periods
+   * @param pv present value -- borrowed or invested principal
+   * @param fv future value of loan or annuity
+   * @return double representing periodic payment amount
    * @see #pmt(double, int, double, double, int)
    */
   public static double pmt(double r, int nper, double pv, double fv) {
@@ -306,21 +397,54 @@ public class Financials {
   /**
    * Overloaded pmt() call omitting fv and type, which both default to 0.
    *
+   * @param r periodic interest rate represented as a decimal
+   * @param nper number of total payments / periods
+   * @param pv present value -- borrowed or invested principal
+   * @return double representing periodic payment amount
    * @see #pmt(double, int, double, double, int)
    */
   public static double pmt(double r, int nper, double pv) {
     return pmt(r, nper, pv, 0);
   }
 
+  /**
+   * High-precision PMT using {@link BigDecimal} arithmetic, omitting type (defaults to 0).
+   *
+   * @param intRate periodic interest rate represented as a decimal
+   * @param nper number of total payments / periods
+   * @param pv present value -- borrowed or invested principal
+   * @param fv future value of loan or annuity
+   * @return BigDecimal representing the periodic payment amount
+   * @see #pmt(BigDecimal, int, BigDecimal, BigDecimal, int)
+   */
   public static BigDecimal pmt(BigDecimal intRate, int nper, BigDecimal pv, BigDecimal fv) {
     return pmt(intRate, nper, pv, fv, 0);
   }
 
+  /**
+   * High-precision PMT using {@link BigDecimal} arithmetic, omitting fv and type (both default to
+   * 0).
+   *
+   * @param intRate periodic interest rate represented as a decimal
+   * @param nper number of total payments / periods
+   * @param pv present value -- borrowed or invested principal
+   * @return BigDecimal representing the periodic payment amount
+   * @see #pmt(BigDecimal, int, BigDecimal, BigDecimal, int)
+   */
   public static BigDecimal pmt(BigDecimal intRate, int nper, BigDecimal pv) {
     return pmt(intRate, nper, pv, BigDecimal.ZERO, 0);
   }
 
-  /* An alternative, extremely precise way */
+  /**
+   * High-precision PMT using {@link BigDecimal} arithmetic with scale 9.
+   *
+   * @param intRate periodic interest rate represented as a decimal
+   * @param nper number of total payments / periods
+   * @param pv present value -- borrowed or invested principal
+   * @param fv future value of loan or annuity
+   * @param type when payment is made: beginning of period is 1; end is 0
+   * @return BigDecimal representing the periodic payment amount
+   */
   public static BigDecimal pmt(
       BigDecimal intRate, int nper, BigDecimal pv, BigDecimal fv, int type) {
     BigDecimal numerator = intRate.multiply(((pv.multiply(ONE.add(intRate).pow(nper))).add(fv)));
@@ -331,6 +455,9 @@ public class Financials {
   }
 
   /**
+   * Calculates the annual percentage rate (APR), also known as effective interest, from a monthly
+   * IRR.
+   *
    * @param monthlyIrr the MONTHLY internal rate of return (monthly irr)
    * @return the annual percentage rate (effective interest)
    */
@@ -341,9 +468,14 @@ public class Financials {
   }
 
   /**
-   * r = (1 + i/n)^n - 1 r represents the effective interest rate, i represents the YEARLY internal
-   * rate of return (irr) see InternalRateOfReturn, If you have montly irr you can just do irr*12 to
-   * feed this method n represents the number of compounding periods per year.
+   * Calculates the effective interest rate from an annual IRR using monthly compounding.
+   *
+   * <p>Formula: {@code r = (1 + i/n)^n - 1} where {@code r} is the effective interest rate, {@code
+   * i} is the yearly IRR, and {@code n} is 12 (monthly compounding periods). If you have a monthly
+   * IRR you can multiply it by 12 to obtain the yearly value to pass to this method.
+   *
+   * @param yearlyIrr the YEARLY internal rate of return
+   * @return the effective interest rate
    */
   public static double effectiveInterestRate(double yearlyIrr) {
     int n = 12;
@@ -351,11 +483,13 @@ public class Financials {
   }
 
   /**
-   * @param loanAmt *INCLUDING* startupfee
+   * Calculates the effective interest rate for a loan from its parameters.
+   *
+   * @param loanAmt the loan amount <em>including</em> startup fee
+   * @param interest the nominal yearly interest rate
    * @param tenureMonths the tenure in months
-   * @param amortizationFreeMonths number of amortization free months
-   * @param interest then nominal yearly interest
-   * @param statementFee invoice fee
+   * @param amortizationFreeMonths the number of amortization-free months
+   * @param statementFee the per-period invoice fee
    * @return the effective interest rate
    */
   public static double effectiveInterestRate(
@@ -364,30 +498,59 @@ public class Financials {
       int tenureMonths,
       int amortizationFreeMonths,
       Integer statementFee) {
-    // List<Payment> paymentPlanList = Cashflow.calculatePaymentPlan(loanAmt, tenureMonths,
-    // amortizationFreeMonths, interest, BigDecimal.valueOf(statementFee));
     double[] cashFlow =
         cashFlow(loanAmt, interest, tenureMonths, amortizationFreeMonths, statementFee);
     double irr = irr(cashFlow);
     return apr(irr);
   }
 
+  /**
+   * Returns zero if the value is {@code null}, otherwise returns the value itself.
+   *
+   * @param val an Integer, or {@code null}
+   * @return the value, or 0 if {@code null}
+   */
   public static int nz(Integer val) {
     return val == null ? 0 : val;
   }
 
+  /**
+   * Returns zero if the value is {@code null}, otherwise returns the value itself.
+   *
+   * @param val a Double, or {@code null}
+   * @return the value, or 0 if {@code null}
+   */
   public static double nz(Double val) {
     return val == null ? 0 : val;
   }
 
+  /**
+   * Returns zero if the value is {@code null}, otherwise returns its {@code double} representation.
+   *
+   * @param val a BigDecimal, or {@code null}
+   * @return the double value, or 0 if {@code null}
+   */
   public static double nz(BigDecimal val) {
     return val == null ? 0 : val.doubleValue();
   }
 
+  /**
+   * Returns zero if the value is {@code null}, otherwise returns the value itself.
+   *
+   * @param val a Long, or {@code null}
+   * @return the value, or 0 if {@code null}
+   */
   public static long nz(Long val) {
     return val == null ? 0 : val;
   }
 
+  /**
+   * Returns zero if the value is {@code null}, otherwise returns the absolute value as a {@code
+   * long}.
+   *
+   * @param val a BigInteger, or {@code null}
+   * @return the absolute long value, or 0 if {@code null}
+   */
   public static long nz(BigInteger val) {
     return val == null ? 0 : Math.abs(val.longValue());
   }

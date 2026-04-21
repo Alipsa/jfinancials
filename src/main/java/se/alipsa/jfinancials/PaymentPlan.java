@@ -67,6 +67,13 @@ public class PaymentPlan extends ArrayList<Payment> {
     return List.copyOf(columnNames);
   }
 
+  /**
+   * Returns a CSV representation of the payment plan with a header row followed by one row per
+   * payment period, with monetary values rounded to 2 decimal places.
+   *
+   * @return CSV string of the payment plan
+   */
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(String.join(",", getColumnNames())).append("\n");
@@ -86,6 +93,12 @@ public class PaymentPlan extends ArrayList<Payment> {
     return sb.toString();
   }
 
+  /**
+   * Returns all values for a single column across every payment period.
+   *
+   * @param name the column name as defined in {@link Payment#columnNames}
+   * @return a list of values, one per payment period
+   */
   public List<Number> getColumn(String name) {
     List<Number> col = new ArrayList<>();
     for (Payment p : this) {
