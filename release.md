@@ -10,6 +10,7 @@
 - Replace `maven.compiler.source`/`maven.compiler.target` with `maven.compiler.release` for correct cross-compilation
 - Fix readme: version, `tenureYears` → `tenureMonths` in cashFlow parameter docs, `cachFlow` typo
 - increase test coverage
+- add spotbugs and spotless plugins, reformat code with spotless
 
 ## v1.0.0, 2024-09-25
 Initial version of the library with the following features:
